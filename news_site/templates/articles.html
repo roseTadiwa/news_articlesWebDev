@@ -1,0 +1,7 @@
+<h2>Articles - {{ cluster }} | {{ source }}</h2>
+<ul>
+  {% for article in articles %}
+    <li><strong>{{ article.title }}</strong><br>
+    <a href="{{ article.url }}" target="_blank">{{ article.url }}</a></li>
+  {% endfor %}
+</ul>

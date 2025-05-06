@@ -1,33 +1,27 @@
 import pandas as pd
 from django.shortcuts import render
 
-def home(request):
-    # Load the clustered articles CSV file
-    df = pd.read_csv('clustered_articles.csv')
+# Load the clustered data
+df = pd.read_csv("clustered_articles.csv")
 
-    # Get unique cluster IDs
-    clusters = df['cluster'].unique()
-    clusters.sort()
+# Ensure proper data formatting
+df = df[df["cluster"].apply(lambda x: str(x).isdigit())]  # Keep only numeric cluster labels
+df["cluster"] = df["cluster"].astype(int)
 
-    # Get selected cluster from URL (or default to 0)
-    selected_cluster = int(request.GET.get('cluster', 0))
-
-    # Filter the articles based on the selected cluster
-    filtered_articles = df[df['cluster'] == selected_cluster]
-
-    # Add category and source class to each article for CSS styling
-    for index, article in filtered_articles.iterrows():
-        # Creating class names for category and source to avoid invalid CSS characters
-        article['category_class'] = article['category'].title().replace('/', '')
-        article['source_class'] = article['source'].lower()
-
-    # Prepare context for rendering the template
-    context = {
-    'clusters': clusters,
-    'selected_cluster': selected_cluster,
-    'articles': filtered_articles.to_dict(orient='records'),
-    'cluster_class': f"cluster-{selected_cluster}"
-}
+def cluster_list(request):
+    cluster_ids = sorted(df['cluster'].unique())
+    clusters = [{"cluster_id": cluster_id} for cluster_id in cluster_ids]
+    return render(request, "cluster_list.html", {"clusters": clusters})
 
 
-    return render(request, 'home.html', context)
+    
+def articles_by_cluster(request, cluster_id):
+    cluster_id = int(cluster_id)  # Ensure it's an integer
+    filtered = df[df['cluster'] == cluster_id]
+    articles = filtered.to_dict(orient="records")
+
+    return render(request, "cluster_articles.html", {
+        "cluster_id": cluster_id + 1,  # So template shows Cluster 1 instead of 0
+        "articles": articles
+    })
+
