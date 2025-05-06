@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>News Clusters</title>
+    <style>
+.cluster-0 li { background-color: #fff9c4; }  /* Light Yellow */
+    .cluster-1 li { background-color: #c8e6c9; }  /* Light Green */
+    .cluster-2 li { background-color: #e1bee7; }  /* Light Purple */
+    .cluster-3 li { background-color: #d7ccc8; }  /* Light Brown */
+    .cluster-4 li { background-color: #ffcdd2; }  /* Light Red */
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #e6f0ff, #ffffff);
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #1a1a1a;
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .info-box {
+            background-color: #e6f2ff;
+            border-left: 6px solid #007acc;
+            padding: 15px;
+            margin: 20px auto;
+            border-radius: 8px;
+            font-size: 15px;
+            line-height: 1.6;
+            max-width: 800px;
+        }
+
+        form {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        select {
+            padding: 8px 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        h2 {
+            color: #005580;
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        li {
+            background-color: #f0f8ff;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        li strong {
+            font-size: 18px;
+            color: #003366;
+        }
+
+        li a {
+            color: #004080;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        li a:hover {
+            text-decoration: underline;
+        }
+
+        em {
+            display: block;
+            margin-top: 5px;
+            font-style: normal;
+        }
+
+        .category-Business {
+            color: #2e8b57;
+            font-weight: bold;
+        }
+
+        .category-Politics {
+            color: #b22222;
+            font-weight: bold;
+        }
+
+        .category-Arts {
+            color: #8a2be2;
+            font-weight: bold;
+        }
+
+        .category-Sports {
+            color: #ff8c00;
+            font-weight: bold;
+        }
+
+        .source-bbc {
+            color: #003366;
+            font-weight: bold;
+        }
+
+        .source-independent {
+            color: #8b0000;
+            font-weight: bold;
+        }
+
+        .source-standard {
+            color: #006400;
+            font-weight: bold;
+        }
+
+        .source-dailynews {
+            color: #8b4513;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>News Article Clusters</h1>
+
+    <div class="info-box">
+        This web page showcases news articles automatically grouped into clusters using the K-Means algorithm based on their textual content. Articles were scraped from BBC, The Independent, The Standard, and Daily News across four categories: Business, Politics, Arts/Culture/Celebrities, and Sports. Use the dropdown below to explore each cluster and view related stories.
+    </div>
+
+    <form method="get">
+        <label for="cluster">Select Cluster:</label>
+        <select name="cluster" id="cluster" onchange="this.form.submit()">
+            {% for cluster in clusters %}
+            <option value="{{ cluster }}" {% if cluster == selected_cluster %}selected{% endif %}>Cluster {{ cluster|add:"1" }}</option>
+    
+            {% endfor %}
+        </select>
+    </form>
+
+    <hr>
+    <h2>Articles in Cluster {{ selected_cluster|add:"1" }}</h2>
+
+    <ul class="{{ cluster_class }}">
+        {% for article in articles %}
+            <li>
+                <strong>{{ article.title }}</strong><br>
+                <a href="{{ article.url }}" target="_blank">{{ article.url }}</a><br>
+                <em>
+                    Category: <span class="category-{{ article.category_class }}">{{ article.category }}</span> |
+                    Source: <span class="source-{{ article.source_class }}">{{ article.source }}</span>
+                </em>
+            </li>
+        {% endfor %}
+    </ul>
+    
+</body>
+</html>
